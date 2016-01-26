@@ -1,10 +1,7 @@
-# vasplan-utilities
-The aim of this repository is to provide useful libs to make my (and so many people as possible) life easy.
+# Properties Loader
+The aim of this repository is to provide a useful lib to make my (and so many people as possible) life easy. The idea behind it it's simple: Provide an easy way to **map properties files into Java classes**.
 
-## Properties Loader
-This is the first lib of the repository. The idea behind it it's simple: Provide an easy way to **map properties files into Java classes**.
-
-### How does it work?
+## How does it work?
 Assuming that you've managed to add the library to your project (in a future I hope to be able to offer it as a Maven dependency) you will only need to do a few things:
 
 * Create the _class_ where you want to map the content of the _properties_ file and annotate it with the following anotation: **@InPropertiesFile**. Ex:
@@ -59,6 +56,6 @@ public static void main(String[] args) {
 MyExampleClass myExampleClass = PropertiesLoader.getInstance(MyExampleClass.class);
 ```
 
-### Supported types
+## Supported types
 TODO
 
