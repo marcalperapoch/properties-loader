@@ -25,6 +25,7 @@ public final class PropertiesLoader {
     private static final String ARRAY_SEPARATOR = ",";
     private static final String ARRAY_INDICATOR_INI = "[";
     private static final String ARRAY_INDICATOR_END = "]";
+    private static final String EXCLUDE_META_INF = "META-INF";
 
     private static PropertiesLoader propertiesLoader;
 
@@ -32,10 +33,12 @@ public final class PropertiesLoader {
     private final Set<Class<?>> configuredClasses;
     private final Map<Class<?>, ?> mInstances;
     private final Map<String, Properties> propertiesMap;
+    private final Set<String> excludedPropertiesFiles;
     private final String mainPackage;
 
-    private PropertiesLoader(String mainPackage) {
+    private PropertiesLoader(String mainPackage, Set<String> excludedPropertiesFiles) {
         this.mainPackage = mainPackage;
+        this.excludedPropertiesFiles = excludedPropertiesFiles;
         reflections = new Reflections(new ConfigurationBuilder()
                 .setUrls(ClasspathHelper.forPackage(this.mainPackage))
                 .setScanners(new ResourcesScanner(), new TypeAnnotationsScanner(), new SubTypesScanner()));
@@ -52,11 +55,17 @@ public final class PropertiesLoader {
         return reflections.getTypesAnnotatedWith(InPropertiesFile.class);
     }
 
+    private boolean isValidPath(String path) {
+        return (!excludedPropertiesFiles.contains(path) && !path.startsWith(EXCLUDE_META_INF));
+    }
+
     private Map<String, Properties> getAllPropertiesFiles() {
         Map<String, Properties> properties = new HashMap<String, Properties>();
         for(String path: getPropertiesFiles()) {
-            String realPath = ClassLoader.getSystemResource(path).getPath();
-            properties.put(getClassPathFromProperties(path), loadProperties(realPath));
+            if (isValidPath(path)) {
+                String realPath = ClassLoader.getSystemResource(path).getPath();
+                properties.put(getClassPathFromProperties(path), loadProperties(realPath));
+            }
         }
         return properties;
     }
@@ -159,7 +168,11 @@ public final class PropertiesLoader {
     }
 
     public static synchronized void initialize(String mainPackage) {
-        propertiesLoader = new PropertiesLoader(mainPackage);
+        initialize(mainPackage, new HashSet<String>());
+    }
+
+    public static synchronized void initialize(String mainPackage, Set<String> excludedPropertiesFiles) {
+        propertiesLoader = new PropertiesLoader(mainPackage, excludedPropertiesFiles);
     }
 
     public static synchronized boolean isInitialized() {

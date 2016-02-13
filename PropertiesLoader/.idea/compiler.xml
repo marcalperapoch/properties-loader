@@ -26,6 +26,8 @@
         <module name="PropertiesLoader" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel target="1.7" />
+    <bytecodeTargetLevel target="1.7">
+      <module name="PropertiesLoader" target="1.7" />
+    </bytecodeTargetLevel>
   </component>
 </project>
