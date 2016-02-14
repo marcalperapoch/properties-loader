@@ -1,5 +1,6 @@
 package com.vasplan.utilities.properties.model;
 
+import com.vasplan.utilities.properties.utils.Utils;
 import org.apache.commons.beanutils.BeanUtils;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
@@ -7,10 +8,9 @@ import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
-import com.vasplan.utilities.properties.utils.Utils;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -63,8 +63,7 @@ public final class PropertiesLoader {
         Map<String, Properties> properties = new HashMap<String, Properties>();
         for(String path: getPropertiesFiles()) {
             if (isValidPath(path)) {
-                String realPath = ClassLoader.getSystemResource(path).getPath();
-                properties.put(getClassPathFromProperties(path), loadProperties(realPath));
+                properties.put(getClassPathFromProperties(path), loadProperties(path));
             }
         }
         return properties;
@@ -101,7 +100,8 @@ public final class PropertiesLoader {
         InputStreamReader input = null;
 
         try {
-            input = new InputStreamReader(new FileInputStream(path), "UTF8");
+            InputStream is = PropertiesLoader.class.getClassLoader().getResourceAsStream(path);
+            input = new InputStreamReader(is, "UTF8");
             prop.load(input);
 
         } catch (IOException ex) {
