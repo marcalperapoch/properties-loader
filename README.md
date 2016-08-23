@@ -1,5 +1,5 @@
 # Properties Loader
-The aim of this repository is to provide a useful lib to make my (and so many people as possible) life easy. The idea behind it it's simple: Provide an easy way to **map properties files into Java classes**.
+The aim of this repository is to provide a useful lib to **map properties files into Java classes**.
 
 ## How does it work?
 Assuming that you've managed to add the library to your project (in a future I hope to be able to offer it as a Maven dependency) you will only need to do a few things:
